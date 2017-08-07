@@ -7,8 +7,8 @@ from tflearn.layers.estimator import regression
 from statistics import median, mean
 from collections import Counter
 #taking inputs and creating environment
-LR = 1e-3 #Learning rate : Found on documentaion of TFLearn can be changed
-env = gym.make("CartPole-v0")
+LR = 1e-3 #Learning rate : This can be experimented with.
+env = gym.make("CartPole-v0") #Making your environment
 env.reset()
 #These can be changed
 goal_steps = 200
@@ -36,7 +36,8 @@ def randomAgent():
             if done:
                 break
                 
-#randomAgent()
+#randomAgent() I commented this out because it is not needed in the code, it just creates a temporary env to test it for the first time
+                 
 
 #Learning from previous losses.
 def initial():
@@ -94,7 +95,7 @@ def initial():
     print(Counter(accepted_scores))
     #RETURNING TRAINING DATA
     return training_data
-# Creating multi-layer neural network.
+# Creating multi-layer neural network with hyperparameters.
 def neural_network_model(input_size):
 #Input Layer
     network = input_data(shape=[None, input_size, 1], name='input')
@@ -159,6 +160,6 @@ for each_game in range(10):
 
     scores.append(score)
 
-print('Average Score:',sum(scores)/len(scores))
+print('Average Score:',sum(scores)/len(scores)) #Printing average scores
 print('choice 1:{}  choice 0:{}'.format(choices.count(1)/len(choices),choices.count(0)/len(choices)))
-print(score_requirement)
+print(score_requirement) # Printing score requirement.
