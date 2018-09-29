@@ -7,11 +7,11 @@ from tflearn.layers.estimator import regression
 from statistics import median, mean
 from collections import Counter
 #taking inputs and creating environment
-LR = 1e-3 #Learning rate : This can be experimented with.
+LearningRate = 1e-3 #Learning rate : This can be experimented with.
 env = gym.make("CartPole-v0") #Making your environment
 env.reset()
 #These can be changed
-goal_steps = 200
+goal_episode = 200
 score_requirement = 50
 initial_games = 1500
 
@@ -53,18 +53,18 @@ def initial():
         
         game_memory = [] #sTORING THE RESULTS OF GAME
         #PREVIOUS OBSERVATION
-        prev_observation = []
+        previous_observation = []
         # for each frame in 200
-        for _ in range(goal_steps):
+        for _ in range(goal_episode):
             # CHOOSING A RANDOM ACTION (0 OR 1) FOR (lEFT,RIGHT)
             action = random.randrange(0,2)
         
             observation, reward, done, info = env.step(action)
             
             #STORING PREVIOUS ACTIONS AND OBSERVATIONS, AND USING PREVIOUS OBSERVATION TO LEARN.
-            if len(prev_observation) > 0 :
-                game_memory.append([prev_observation, action])
-            prev_observation = observation
+            if len(previous_observation) > 0 :
+                game_memory.append([previous_observation, action])
+            previous_observation = observation
             score+=reward
             if done: break
 #IF SCORE IS MET, METHODOLOGY IS BEING REINFORCED.
@@ -86,8 +86,8 @@ def initial():
         scores.append(score)
     
     # SCORES CAN BE REFERED TO LATER
-    training_data_save = np.array(training_data)
-    np.save('saved.npy',training_data_save)
+    training_data_saved = np.array(training_data)
+    np.save('saved.npy',training_data_saved)
     
     #Displaying current average and median scores.
     print('Average accepted score:',mean(accepted_scores))
@@ -95,12 +95,12 @@ def initial():
     print(Counter(accepted_scores))
     #RETURNING TRAINING DATA
     return training_data
-# Creating multi-layer neural network with hyperparameters.
+# Creating a neural network with hyperparameters.
 def neural_network_model(input_size):
 #Input Layer
     network = input_data(shape=[None, input_size, 1], name='input')
     #rectified linear unit (relu)
-    #All 5 can satisfy a 128, but I just tested it ot see what happens, there's no change
+    #All 5 can satisfy a 128, but I just tested it to see what happens, there's no change
     network = fully_connected(network, 128, activation='relu')
     network = dropout(network, 0.8)
 
@@ -117,7 +117,7 @@ def neural_network_model(input_size):
     network = dropout(network, 0.8)
 #Output Layer
     network = fully_connected(network, 2, activation='softmax')
-    network = regression(network, optimizer='Adam', learning_rate=LR, loss='categorical_crossentropy', name='targets') #Adam is a type of optimizer
+    network = regression(network, optimizer='Adam', learning_rate=LearningRate, loss='categorical_crossentropy', name='targets') #Adam is a type of optimizer
     model = tflearn.DNN(network, tensorboard_dir='log')
 
     return model
@@ -137,12 +137,12 @@ training_data = initial()
 model = train_model(training_data)
 scores = [] #Empty ARRAY
 choices = []
-for each_game in range(10):
+for each_episode in range(10):
     score = 0
     game_memory = []
-    prev_obs = []
+    prev_obs = [] # Different from previous_observation array
     env.reset()
-    for _ in range(goal_steps):
+    for _ in range(goal_episode):
         env.render()
 
         if len(prev_obs)==0:
