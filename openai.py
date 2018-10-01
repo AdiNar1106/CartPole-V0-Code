@@ -16,7 +16,7 @@ score_requirement = 50
 initial_games = 1500
 
 # making a random agent for trial
-def randomAgent():
+def makeRandomAgent():
     
     for episode in range(5):
         env.reset()
@@ -36,11 +36,11 @@ def randomAgent():
             if done:
                 break
                 
-#randomAgent() I commented this out because it is not needed in the code, it just creates a temporary env to test it for the first time
+#makeRandomAgent() I commented this out because it is not needed in the code, it just creates a temporary env to test it for the first time
                  
 
 #Learning from previous losses.
-def initial():
+def initialRun():
     #OBSERVATION, ACTIONS
     training_data = []
     # FINDING SCORES
@@ -65,7 +65,7 @@ def initial():
             if len(previous_observation) > 0 :
                 game_memory.append([previous_observation, action])
             previous_observation = observation
-            score+=reward
+            score= score + reward
             if done: break
 #IF SCORE IS MET, METHODOLOGY IS BEING REINFORCED.
         if score >= score_requirement:
@@ -90,8 +90,8 @@ def initial():
     np.save('saved.npy',training_data_saved)
     
     #Displaying current average and median scores.
-    print('Average accepted score:',mean(accepted_scores))
-    print('Median score for accepted scores:',median(accepted_scores))
+    print('Average accepted score:', mean(accepted_scores))
+    print('Median score for accepted scores:', median(accepted_scores))
     print(Counter(accepted_scores))
     #RETURNING TRAINING DATA
     return training_data
@@ -123,7 +123,7 @@ def neural_network_model(input_size):
     return model
 
 
-def train_model(training_data, model=False):  #Training the model 
+def training_model(training_data, model=False):  #Training the model 
 
     X = np.array([i[0] for i in training_data]).reshape(-1,len(training_data[0][0]),1)
     y = [i[1] for i in training_data]
@@ -133,7 +133,7 @@ def train_model(training_data, model=False):  #Training the model
     # learning: one epoch = one pass of the full training set.
     model.fit({'input': X}, {'targets': y}, n_epoch=5, snapshot_step=500, show_metric=True, run_id='openai_learning')
     return model
-training_data = initial()
+training_data = initialRun()
 model = train_model(training_data)
 scores = [] #Empty ARRAY
 choices = []
